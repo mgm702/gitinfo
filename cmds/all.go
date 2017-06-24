@@ -3,24 +3,39 @@ package cmds
 import (
 	"fmt"
 
-	_ "github.com/mgm702/gitinfo/lib"
+	"github.com/mgm702/gitinfo/lib"
 	"github.com/urfave/cli"
 )
 
-func AllCmds(a *cli.App) {
-	// Here we will call to each of the commands in
-	// there files and build the command list to
-	// return to the main application
-
-	//StarsCmd(a)
-	//ForksCmd(a)
-	//IssuesCmd(a)
-	//UrlCmd(a)
+func LoadCmds(a *cli.App) {
+	UrlCmd(a)
+	IssuesCmd(a)
+	StarsCmd(a)
+	ForksCmd(a)
+	SizeCmd(a)
 	DescriptionCmd(a)
 }
 
 func AllInfo(c *cli.Context) {
-	// if this function is called all info is loaded
-	// and displayed to user
-	fmt.Printf("Hello from AllInfo: %q\n", c.Args().Get(0))
+	repo := lib.GatherInfo(c)
+	printAll(repo)
+}
+
+func printAll(repo lib.RepoInfo) {
+	fmt.Println("--------------")
+	fmt.Println("|ID          |", repo.Id)
+	fmt.Println("|NAME        |", repo.Name)
+	fmt.Println("|HOMEPAGE    |", repo.Homepage)
+	fmt.Println("|DESCRIPTION |", repo.Description)
+	fmt.Println("--------------")
+	fmt.Println("|URL         |", repo.Url)
+	fmt.Println("|CLONE URL   |", repo.CloneUrl)
+	fmt.Println("|SSH URL     |", repo.SshUrl)
+	fmt.Println("--------------")
+	// Convert the Size to something readable
+	fmt.Println("|SIZE (KB)   |", readableSize(repo.Size))
+	fmt.Println("|OPEN ISSUES |", repo.Issues)
+	fmt.Println("|STARGAZERS  |", repo.Stars)
+	fmt.Println("|FORKS       |", repo.Forks)
+	fmt.Println("--------------")
 }

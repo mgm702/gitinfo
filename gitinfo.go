@@ -14,7 +14,7 @@ func main() {
 	app.Version = "0.0.1"
 
 	app.EnableBashCompletion = true
-	cmds.AllCmds(app)
+	cmds.LoadCmds(app)
 
 	// default action which returns all information
 	app.Action = func(c *cli.Context) error {

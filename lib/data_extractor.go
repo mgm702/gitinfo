@@ -1,10 +1,12 @@
 package lib
 
-// Purpose of this package is to take input given from command line app and
-// make an API request to Github.com
-//
-// Once that request has been made and JSON returned, make sure it's ready
-// for other function consumption
+/*
+  Purpose of this package is to take input given from command line app and
+  make an API request to Github.com
+
+  Once that request has been made and JSON returned, make sure it's ready
+  for other function consumption
+*/
 
 import (
 	"encoding/json"
@@ -12,33 +14,34 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	_ "reflect"
 	"strings"
 
 	_ "github.com/caarlos0/spin"
 	"github.com/urfave/cli"
 )
 
-// Repo struct to hold the data I want to collect from the API
 type RepoInfo struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
-	Url         string `json:"url"`
+	Url         string `json:"html_url"`
+	CloneUrl    string `json:"clone_url"`
+	Homepage    string `json:"homepage"`
+	SshUrl      string `json:"ssh_url"`
 	Description string `json:"description"`
 	Size        int    `json:"size"`
-	Stargazers  int    `json:"stargazers_count"`
+	Stars       int    `json:"stargazers_count"`
 	Forks       int    `json:"forks_count"`
+	Issues      int    `json:"open_issues"`
 }
 
-func GatherInfo(c *cli.Context) error {
+func GatherInfo(c *cli.Context) RepoInfo {
 	req_url := buildRequest(fixInput(c.Args().Get(0)))
 	// possible place to put spinner library
-	clientRequest(req_url)
-
-	return nil
+	data := clientRequest(req_url)
+	checkData(data)
+	return data
 }
 
-// used to correctly format user input before API request
 func fixInput(input string) string {
 	if strings.ContainsAny(input, "/") {
 		return input
@@ -48,11 +51,8 @@ func fixInput(input string) string {
 	}
 }
 
-// method used to build the API request to Github
 func buildRequest(input string) (req *http.Request) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s", input)
-	fmt.Printf("The url is: %s\n", url)
-
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal("NewRequest: ", err)
@@ -61,40 +61,29 @@ func buildRequest(input string) (req *http.Request) {
 	return
 }
 
-// used to build the client and make request
-func clientRequest(req *http.Request) {
-
+func clientRequest(req *http.Request) RepoInfo {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal("Do: ", err)
-		return
 	}
-
-	// return resp use reflection package to see type
-	defer resp.Body.Close()
-
 	var repo RepoInfo
+	decodeJson(resp, &repo)
+	return repo
+}
+
+func decodeJson(resp *http.Response, repo *RepoInfo) {
+	defer resp.Body.Close()
 
 	if err := json.NewDecoder(resp.Body).Decode(&repo); err != nil {
 		log.Println(err)
 	}
-
-	// need to add test to make sure name, url and id are returned otherwise error
-	fmt.Println("ID = ", repo.Id)
-	fmt.Println("Name   = ", repo.Name)
-	fmt.Println("URL  = ", repo.Url)
-	fmt.Println("Description   = ", repo.Description)
-	fmt.Println("Size   = ", repo.Size)
-	fmt.Println("Stargazers   = ", repo.Stargazers)
-	fmt.Println("Forks   = ", repo.Forks)
 }
 
-func decodeJson() {
-
-}
-
-func checkInfo() {
-
+func checkData(repo RepoInfo) error {
+	if len(repo.Name) == 0 && repo.Id == 0 {
+		log.Fatal("Repo ID and Name are empty, Gitinfo can't find this Repo :(")
+	}
+	return nil
 }
