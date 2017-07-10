@@ -1,5 +1,6 @@
 gitinfo
 ===
+[![Build Status](https://travis-ci.org/mgm702/gitinfo.svg?branch=master)](https://travis-ci.org/mgm702/gitinfo)
 
 gitinfo is a simple, and fast package for getting information on your favorite Github Repositories.
 The goal was to create a simple CLI tool that any developer could use to retrieve various parts of info related to the Github Repository they searched for.
