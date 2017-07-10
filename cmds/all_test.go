@@ -2,19 +2,40 @@ package cmds
 
 import (
 	"testing"
+
+	"github.com/urfave/cli"
 )
 
 func TestLoadCmds(t *testing.T) {
-	// start a new cli app
-	// call this func
-	// ============
-	// test to make sure app has
-	// all loaded commands
-}
+	var cmdTest = []struct {
+		Name    string
+		Aliases []string
+		Usage   string
+	}{
+		{"url", []string{"u"}, "Prints the Urls of a project"},
+		{"issues", []string{"i"}, "Issues of a project"},
+		{"stars", []string{"s"}, "Stars of a project"},
+		{"forks", []string{"f"}, "Forks for a project"},
+		{"size", []string{"k"}, "Size of a project"},
+		{"description", []string{"d"}, "Description of a project"},
+	}
 
-func TestAllInfo(t *testing.T) {
-	// set argument one in command line
-	// app to something like "ruby"
-	// ===============
-	// test to make sure all the data is printed
+	app := cli.NewApp()
+	LoadCmds(app)
+
+	for i := 0; i < len(app.Commands); i += 1 {
+		if app.Commands[i].Name != cmdTest[i].Name {
+			t.Errorf("fixInput: expected %d, actual %d", app.Commands[i].Name, cmdTest[i].Name)
+		}
+
+		for y := 0; y < len(app.Commands[i].Aliases); y += 1 {
+			if app.Commands[i].Aliases[y] != cmdTest[i].Aliases[y] {
+				t.Errorf("fixInput: expected %d, actual %d", app.Commands[i].Aliases[y], cmdTest[i].Aliases[y])
+			}
+		}
+
+		if app.Commands[i].Usage != cmdTest[i].Usage {
+			t.Errorf("fixInput: expected %d, actual %d", app.Commands[i].Usage, cmdTest[i].Usage)
+		}
+	}
 }

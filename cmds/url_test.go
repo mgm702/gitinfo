@@ -3,21 +3,20 @@ package cmds
 import (
 	"testing"
 
-	"github.com/mgm702/gitinfo/lib"
 	"github.com/urfave/cli"
 )
 
-func TestDescriptionCmd(t *testing.T) {
+func TestUrlCmd(t *testing.T) {
 	var cmdTest = []struct {
 		Name    string
 		Aliases []string
 		Usage   string
 	}{
-		{"description", []string{"d"}, "Description of a project"},
+		{"url", []string{"u"}, "Prints the Urls of a project"},
 	}
 
 	app := cli.NewApp()
-	DescriptionCmd(app)
+	UrlCmd(app)
 
 	for i := 0; i < len(app.Commands); i += 1 {
 		if app.Commands[i].Name != cmdTest[i].Name {
