@@ -3,4 +3,9 @@ language: go
 go:
   - 1.8
 
-script: go get github.com/urfave/cli && go get github.com/caarlos0/spin && go test -v ./...
+install:
+    - go get github.com/urfave/cli
+    - go get github.com/caarlos0/spin
+    - go get gopkg.in/jarcoal/httpmock.v1
+
+script: go test -v ./...

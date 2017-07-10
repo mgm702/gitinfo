@@ -3,7 +3,6 @@ package cmds
 import (
 	"testing"
 
-	"github.com/mgm702/gitinfo/lib"
 	"github.com/urfave/cli"
 )
 
