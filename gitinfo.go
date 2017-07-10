@@ -11,7 +11,8 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "Gitinfo"
-	app.Version = "0.1.0"
+	app.Usage = "CLI which helps retrieve Github Repo info"
+	app.Version = "1.0.0"
 
 	app.EnableBashCompletion = true
 	cmds.LoadCmds(app)
